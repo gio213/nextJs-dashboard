@@ -1,19 +1,5 @@
-// const { db } = require('@vercel/postgres');
-import dotenv from "dotenv";
-dotenv.config();
-const db = {
-  connect: async () => {
-    const { Client } = require("pg");
-    const client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
-    await client.connect();
-    return client;
-  },
-};
+import { db } from "@vercel/postgres";
+import bcrypt from "bcrypt";
 
 import {
   invoices,
@@ -21,7 +7,6 @@ import {
   revenue,
   users,
 } from "../app/lib/placeholder-data.js";
-import { hash } from "bcrypt";
 
 async function seedUsers(client) {
   try {
@@ -41,7 +26,7 @@ async function seedUsers(client) {
     // Insert data into the "users" table
     const insertedUsers = await Promise.all(
       users.map(async (user) => {
-        const hashedPassword = await hash(user.password, 10);
+        const hashedPassword = await bcrypt.hash(user.password, 10);
         return client.sql`
         INSERT INTO users (id, name, email, password)
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
