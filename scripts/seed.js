@@ -1,4 +1,5 @@
 const { db } = require("@vercel/postgres");
+
 const {
   invoices,
   customers,
@@ -6,6 +7,10 @@ const {
   users,
 } = require("../app/lib/placeholder-data.js");
 const bcrypt = require("bcrypt");
+const dontenv = require("dotenv");
+// require("dotenv").config({ path: "../.env" });
+
+console.log(process.env.DATABASE_URL);
 
 async function seedUsers(client) {
   try {
